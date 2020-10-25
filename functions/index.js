@@ -5,29 +5,30 @@ const cors = require('cors');
 const app = express();
 app.use(cors({ origin: true }));
 
-var serviceAccount = require("./permissions.json");
+const serviceAccount = require("./permissions.json");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://fir-api-9a206.firebaseio.com"
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${PROJECTID}.firebaseio.com`
 });
+
 const db = admin.firestore();
 
 // create
 app.post('/api/create', (req, res) => {
-    (async () => {
+    (async() => {
         try {
-            await db.collection('items').doc('/' + req.body.id + '/').create({item: req.body.item});
+            await db.collection('items').doc('/' + req.body.id + '/').create({ item: req.body.item });
             return res.status(200).send();
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
         }
-      })();
-  });
+    })();
+});
 
 // read item
 app.get('/api/read/:item_id', (req, res) => {
-    (async () => {
+    (async() => {
         try {
             const document = db.collection('items').doc(req.params.item_id);
             let item = await document.get();
@@ -37,12 +38,12 @@ app.get('/api/read/:item_id', (req, res) => {
             console.log(error);
             return res.status(500).send(error);
         }
-        })();
-    });
+    })();
+});
 
 // read all
 app.get('/api/read', (req, res) => {
-    (async () => {
+    (async() => {
         try {
             let query = db.collection('items');
             let response = [];
@@ -62,36 +63,36 @@ app.get('/api/read', (req, res) => {
             console.log(error);
             return res.status(500).send(error);
         }
-        })();
-    });
+    })();
+});
 
 // update
 app.put('/api/update/:item_id', (req, res) => {
-(async () => {
-    try {
-        const document = db.collection('items').doc(req.params.item_id);
-        await document.update({
-            item: req.body.item
-        });
-        return res.status(200).send();
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(error);
-    }
+    (async() => {
+        try {
+            const document = db.collection('items').doc(req.params.item_id);
+            await document.update({
+                item: req.body.item
+            });
+            return res.status(200).send();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
     })();
 });
 
 // delete
 app.delete('/api/delete/:item_id', (req, res) => {
-(async () => {
-    try {
-        const document = db.collection('items').doc(req.params.item_id);
-        await document.delete();
-        return res.status(200).send();
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(error);
-    }
+    (async() => {
+        try {
+            const document = db.collection('items').doc(req.params.item_id);
+            await document.delete();
+            return res.status(200).send();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send(error);
+        }
     })();
 });
 
